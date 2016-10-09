@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +18,7 @@ public class QuizCardPlayer {
     private int currentCardIndex ;
     private JFrame frame ;
     private JButton nextButton ;
-    private boolean isSowAnswer ;
+    private boolean isShowAnswer;
 
     public static void main(String[] args){
         QuizCardPlayer reader = new QuizCardPlayer() ;
@@ -42,7 +45,7 @@ public class QuizCardPlayer {
         nextButton = new JButton("Show question") ;
         mainPanel.add(qScroller) ;
         mainPanel.add(nextButton) ;
-        nextButton.addActionListener(new QuizCardBuilder.NextCardListener());
+        nextButton.addActionListener(new NextCardListener());
 
         JMenuBar menuBar = new JMenuBar() ;
         JMenu fileMenu = new JMenu("File") ;
@@ -59,11 +62,11 @@ public class QuizCardPlayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isSowAnswer) {
+            if (isShowAnswer) {
                 // показываем ответ, т. к. вопрос был показан ранее
                 display.setText(currentCard.getAnswer());
                 nextButton.setText("Next card");
-                isSowAnswer = false ;
+                isShowAnswer = false ;
             } else {
                 // показываем следующий вопрос
                 if (currentCardIndex < cardList.size()) {
@@ -76,6 +79,7 @@ public class QuizCardPlayer {
             }
         }
     }
+
     public class OpenMenuListener implements ActionListener {
 
         @Override
@@ -85,5 +89,33 @@ public class QuizCardPlayer {
             loadFile(fileOpen.getSelectedFile()) ;
         }
     }
-    
+    private void loadFile(File file) {
+        cardList = new ArrayList<QuizCard>() ;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file)) ;
+            String line = null ;
+            while ((line = reader.readLine()) != null) {
+                makeCard(line) ;
+            }
+            reader.close() ;
+        } catch (Exception ex) {
+            System.out.println("couldn't read the card file") ;
+            ex.printStackTrace();
+        }
+        // пришло время показать первую карточку
+        showNextCard() ;
+    }
+    private void makeCard(String lineToParse) {
+        String[] result = lineToParse.split("/") ;
+        QuizCard card = new QuizCard(result[0],result[1]) ;
+        cardList.add(card) ;
+        System.out.println("made a card");
+    }
+    private void showNextCard() {
+        currentCard = cardList.get(currentCardIndex) ;
+        currentCardIndex++ ;
+        display.setText(currentCard.getQuestion());
+        nextButton.setText("Show answer") ;
+        isShowAnswer = true ;
+    }
 }
