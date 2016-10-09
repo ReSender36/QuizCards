@@ -54,7 +54,7 @@ public class QuizCardPlayer {
         frame.getContentPane().add(BorderLayout.CENTER,mainPanel) ;
         frame.setSize(640,500);
         frame.setVisible(true);
-    } // закрывам метод GO
+    } // закрываем метод GO
     public class NextCardListener implements ActionListener {
 
         @Override
@@ -74,6 +74,15 @@ public class QuizCardPlayer {
                     nextButton.setEnabled(false) ;
                 }
             }
+        }
+    }
+    public class OpenMenuListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileOpen = new JFileChooser() ;
+            fileOpen.showOpenDialog(frame) ;
+            loadFile(fileOpen.getSelectedFile()) ;
         }
     }
     
