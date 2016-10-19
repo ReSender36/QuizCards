@@ -1,3 +1,5 @@
+import com.sun.xml.internal.ws.dump.MessageDumping;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -40,7 +43,7 @@ public class QuizCardPlayer {
 
         JScrollPane qScroller = new JScrollPane(display) ;
         qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        qScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        qScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         nextButton = new JButton("Show question") ;
         mainPanel.add(qScroller) ;
@@ -62,20 +65,30 @@ public class QuizCardPlayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isShowAnswer) {
-                // показываем ответ, т. к. вопрос был показан ранее
-                display.setText(currentCard.getAnswer());
-                nextButton.setText("Next card");
-                isShowAnswer = false ;
-            } else {
-                // показываем следующий вопрос
-                if (currentCardIndex < cardList.size()) {
-                    showNextCard() ;
+            if(null != cardList) {
+                if (isShowAnswer) {
+                    // показываем ответ, т. к. вопрос был показан ранее
+                    display.setText(currentCard.getAnswer());
+                    nextButton.setText("Next card");
+                    isShowAnswer = false;
                 } else {
-                    // больше карточек нет
-                    display.setText("That was last card");
-                    nextButton.setEnabled(false) ;
+                    // показываем следующий вопрос
+                    if (currentCardIndex < cardList.size()) {
+                        showNextCard();
+                    } else {
+                        // больше карточек нет
+                        display.setText("That was last card");
+                        nextButton.setEnabled(false);
+                    }
                 }
+            }
+            else{
+/*                JFileChooser fileOpen = new JFileChooser() ;
+                fileOpen.showOpenDialog(frame) ;
+                loadFile(fileOpen.getSelectedFile()) ;
+                */
+
+                System.out.println("Не загружен набор карточек") ;
             }
         }
     }
@@ -89,6 +102,7 @@ public class QuizCardPlayer {
             loadFile(fileOpen.getSelectedFile()) ;
         }
     }
+
     private void loadFile(File file) {
         cardList = new ArrayList<QuizCard>() ;
         try {
