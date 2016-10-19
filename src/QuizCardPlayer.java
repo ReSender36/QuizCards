@@ -119,12 +119,14 @@ public class QuizCardPlayer {
         // пришло время показать первую карточку
         showNextCard() ;
     }
+
     private void makeCard(String lineToParse) {
         String[] result = lineToParse.split("/") ;
         QuizCard card = new QuizCard(result[0],result[1]) ;
         cardList.add(card) ;
-        System.out.println("made a card");
+        System.out.println("the card is ready");
     }
+
     private void showNextCard() {
         currentCard = cardList.get(currentCardIndex) ;
         currentCardIndex++ ;
